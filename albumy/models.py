@@ -9,6 +9,7 @@
 """
 from datetime import datetime
 
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 from albumy.extensions import db
@@ -25,3 +26,9 @@ class User(db.Model, UserMixin):
     location = db.Column(db.String(50))
     member_since = db.Column(db.DateTime, default=datetime.utcnow)
     confirmed = db.Column(db.Boolean, default=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def validate_password(self, password):
+        return check_password_hash(self.password_hash, password)
